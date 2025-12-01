@@ -6,8 +6,8 @@ import time
 
 # Initialize Reddit API (Replace with your credentials)
 reddit = praw.Reddit(
-    client_id='K5eClhs10PzsecZNXB-h2Q',
-    client_secret='4iKyc6eLa8xf2gN4es6sl0hv9gL-Bw',
+    client_id='',
+    client_secret='',
     user_agent='your_user_agent'
 )
 
