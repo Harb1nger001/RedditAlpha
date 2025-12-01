@@ -1,0 +1,26 @@
+Column,MissingCount,MissingPercent
+Date,0,0.0
+Open,0,0.0
+High,0,0.0
+Low,0,0.0
+Close,0,0.0
+Volume,0,0.0
+Dividends,0,0.0
+Stock Splits,0,0.0
+Ticker,0,0.0
+SMA_14,13,0.3294475418144957
+EMA_14,0,0.0
+RSI_14,13,0.3294475418144957
+MACD,0,0.0
+MACD_signal,0,0.0
+MACD_diff,0,0.0
+BB_Upper,19,0.481500253421186
+BB_Lower,19,0.481500253421186
+Momentum_10,10,0.25342118601115055
+OBV,0,0.0
+subreddit,813,20.60314242270654
+count_negative,813,20.60314242270654
+count_positive,813,20.60314242270654
+count_total,813,20.60314242270654
+positive_ratio,813,20.60314242270654
+activity_count,813,20.60314242270654

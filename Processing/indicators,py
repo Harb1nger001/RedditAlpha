@@ -1,0 +1,68 @@
+import pandas as pd
+import os
+from tqdm import tqdm
+
+# Load stock data from Data/Raw/
+input_path = os.path.join("Data", "Raw", "stock_data.csv")
+stock_df = pd.read_csv(input_path, parse_dates=["Date"])
+
+# Function to add technical indicators with progress bar
+def add_technical_indicators(df):
+    df = df.copy()
+
+    print("\n📈 Adding technical indicators...")
+
+    # Wrap everything in a main progress bar (1 task)
+    for _ in tqdm(range(1), desc="Processing Indicators"):
+
+        df["SMA_14"] = df["Close"].rolling(window=14).mean()
+        df["EMA_14"] = df["Close"].ewm(span=14, adjust=False).mean()
+
+        # RSI calculation
+        delta = df["Close"].diff()
+        gain = delta.where(delta > 0, 0.0)
+        loss = -delta.where(delta < 0, 0.0)
+        avg_gain = gain.rolling(window=14).mean()
+        avg_loss = loss.rolling(window=14).mean()
+        rs = avg_gain / avg_loss
+        df["RSI_14"] = 100 - (100 / (1 + rs))
+
+        # MACD & MACD Signal
+        ema_12 = df["Close"].ewm(span=12, adjust=False).mean()
+        ema_26 = df["Close"].ewm(span=26, adjust=False).mean()
+        df["MACD"] = ema_12 - ema_26
+        df["MACD_signal"] = df["MACD"].ewm(span=9, adjust=False).mean()
+        df["MACD_diff"] = df["MACD"] - df["MACD_signal"]
+
+        # Bollinger Bands
+        rolling_mean = df["Close"].rolling(window=20).mean()
+        rolling_std = df["Close"].rolling(window=20).std()
+        df["BB_Upper"] = rolling_mean + (rolling_std * 2)
+        df["BB_Lower"] = rolling_mean - (rolling_std * 2)
+
+        # Momentum (10 days)
+        df["Momentum_10"] = df["Close"].diff(10)
+
+        # OBV with progress bar
+        obv = [0]
+        print("\n➡️ Calculating OBV...")
+        for i in tqdm(range(1, len(df)), desc="OBV Progress"):
+            if df["Close"].iloc[i] > df["Close"].iloc[i-1]:
+                obv.append(obv[-1] + df["Volume"].iloc[i])
+            elif df["Close"].iloc[i] < df["Close"].iloc[i-1]:
+                obv.append(obv[-1] - df["Volume"].iloc[i])
+            else:
+                obv.append(obv[-1])
+        df["OBV"] = obv
+
+    return df
+
+# Add indicators
+stock_df_with_indicators = add_technical_indicators(stock_df)
+
+# Save output to Data/Processed/
+os.makedirs("Data/Processed", exist_ok=True)
+output_path = os.path.join("Data", "Processed", "stock_data_with_indicators.csv")
+stock_df_with_indicators.to_csv(output_path, index=False)
+
+print(f"\n✅ Technical indicators added and saved to '{output_path}'")
